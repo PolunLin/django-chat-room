@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'chat',
+    'channels',
     
 ]
 
@@ -167,3 +168,5 @@ ADMIN_URLS = r"backend/(.*)$"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Channels
+ASGI_APPLICATION = 'settings.asgi.application'
