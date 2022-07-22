@@ -12,14 +12,26 @@ import os
 from django.core.asgi import get_asgi_application
 
 
-from channels.routing import ProtocolTypeRouter
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.security.websocket import AllowedHostsOriginValidator
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.settings')
 
  
 ## Let’s start by creating a root routing configuration for Channels
 ## https://channels.readthedocs.io/en/stable/tutorial/part_1.html
+## https://channels.readthedocs.io/en/stable/tutorial/part_2.html
+import chat.routing
+django_asgi_app = get_asgi_application()
+
 application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
-    # Just HTTP for now. (We can add other protocols later.)
+  "http": django_asgi_app,
+  "websocket": AllowedHostsOriginValidator(
+        AuthMiddlewareStack(
+            URLRouter(
+                chat.routing.websocket_urlpatterns
+            )
+        )
+    ),
 })
